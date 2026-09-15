@@ -1,7 +1,8 @@
 # Runs on pull_request AND on push to main.
 #
-# 🔴 `when: event: pull_request` alone is NOT a gate on main — warden shipped
-# nine checks that only ever ran against proposals, never the article.
+# 🔴 `when: event: pull_request` alone is NOT a gate on main. We once shipped a
+# repo whose checks only ever ran against proposals, never against the article
+# that actually deployed — green all the way, guarding nothing.
 when:
   - event: pull_request
   - event: push
