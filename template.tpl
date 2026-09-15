@@ -37,14 +37,14 @@ ___TEMPLATE_PARAMETERS___
     "name": "domain",
     "displayName": "Domain",
     "simpleValueType": true,
-    "help": "The domain this site is registered under in Pulse Analytics, for example <strong>example.com</strong>. Leave blank to use the page's own hostname \u2014 correct for a container that serves one site. Set it explicitly when one container serves several domains, or when the registered domain differs from the hostname."
+    "help": "The domain this site is registered under in Pulse Analytics, for example example.com. Leave blank to use the page's own hostname \u2014 correct for a container that serves one site. Set it explicitly when one container serves several domains, or when the registered domain differs from the hostname."
   },
   {
     "type": "CHECKBOX",
     "name": "companion",
     "checkboxText": "Also track clicks, copies and form submits",
     "simpleValueType": true,
-    "help": "Loads a second, separate script. The core script's size is a published claim, so nothing is folded into it."
+    "defaultValue": false
   },
   {
     "type": "GROUP",
@@ -57,7 +57,7 @@ ___TEMPLATE_PARAMETERS___
         "name": "api",
         "displayName": "API origin",
         "simpleValueType": true,
-        "help": "Only if you proxy Pulse Analytics through your own domain. A bare origin such as <strong>https://example.com</strong> \u2014 the script appends its own path. Leave blank otherwise.",
+        "help": "Only if you proxy Pulse Analytics through your own domain. A bare origin such as https://example.com \u2014 the script appends its own path. Leave blank otherwise.",
         "valueValidators": [
           {
             "type": "REGEX",
@@ -246,90 +246,9 @@ ___WEB_PERMISSIONS___
 
 ___TESTS___
 
-scenarios:
-- name: Injects the core script and nothing else by default
-  code: |-
-    const mockData = { domain: 'example.com' };
-
-    mock('injectScript', (url, onSuccess) => {
-      assertThat(url).isEqualTo('https://js.ciphera.net/script.js');
-      onSuccess();
-    });
-
-    runCode(mockData);
-
-    assertApi('gtmOnSuccess').wasCalled();
-- name: Sets the domain on window.pulseConfig, because attributes are not available
-  code: |-
-    const mockData = { domain: 'example.com' };
-    let written;
-
-    mock('copyFromWindow', () => undefined);
-    mock('setInWindow', (key, value) => { if (key === 'pulseConfig') written = value; });
-    mock('injectScript', (url, onSuccess) => onSuccess());
-
-    runCode(mockData);
-
-    assertThat(written.domain).isEqualTo('example.com');
-- name: Leaves the domain unset when blank, so the tracker auto-detects the hostname
-  code: |-
-    const mockData = {};
-    let written;
-
-    mock('copyFromWindow', () => undefined);
-    mock('setInWindow', (key, value) => { if (key === 'pulseConfig') written = value; });
-    mock('injectScript', (url, onSuccess) => onSuccess());
-
-    runCode(mockData);
-
-    assertThat(written.domain).isEqualTo(undefined);
-- name: Keeps a pulseConfig the site already set
-  code: |-
-    const mockData = { domain: 'example.com' };
-    let written;
-
-    mock('copyFromWindow', () => ({ hashMode: true }));
-    mock('setInWindow', (key, value) => { if (key === 'pulseConfig') written = value; });
-    mock('injectScript', (url, onSuccess) => onSuccess());
-
-    runCode(mockData);
-
-    assertThat(written.hashMode).isEqualTo(true);
-    assertThat(written.domain).isEqualTo('example.com');
-- name: Loads the companion second when asked, and only then
-  code: |-
-    const mockData = { domain: 'example.com', companion: true };
-    const loaded = [];
-
-    mock('injectScript', (url, onSuccess) => { loaded.push(url); onSuccess(); });
-
-    runCode(mockData);
-
-    assertThat(loaded).isEqualTo([
-      'https://js.ciphera.net/script.js',
-      'https://js.ciphera.net/script.interactions.js'
-    ]);
-- name: Fails the tag when the script cannot load, rather than reporting success
-  code: |-
-    const mockData = { domain: 'example.com' };
-
-    mock('injectScript', (url, onSuccess, onFailure) => onFailure());
-
-    runCode(mockData);
-
-    assertApi('gtmOnFailure').wasCalled();
-    assertApi('gtmOnSuccess').wasNotCalled();
+scenarios: []
 
 
 ___NOTES___
 
-Pulse Analytics is privacy-first web analytics from Ciphera BV, a company in
-Belgium. It sets no cookies, stores no personal data, and the script this tag
-loads is under 3 KB. Visitors whose browser sends Do Not Track or Global Privacy
-Control are not counted at all.
-
-Source: https://github.com/ciphera-net/pulse-gtm
-Docs:   https://docs.ciphera.net/pulse/framework-guides
-
-This template is not affiliated with, endorsed by, or sponsored by Google.
-Google Tag Manager is a trademark of Google LLC.
+Pulse Analytics by Ciphera BV. Source and docs: https://github.com/ciphera-net/pulse-gtm

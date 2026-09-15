@@ -119,9 +119,25 @@ const jsCode = js.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:])\/\/.*$/gm, 
 if (/data-domain/.test(jsCode)) fail("the sandboxed JS sets data-domain; GTM cannot set attributes — use window.pulseConfig")
 else ok("no data-* attribute use in the JS (comments excluded)")
 
-const scenarios = (section("TESTS").match(/^- name:/gm) || []).length
-if (scenarios < 6) fail(`only ${scenarios} test scenario(s); the suite has shrunk`)
-else ok(`${scenarios} test scenarios`)
+// 🔴 `___TESTS___` must be exactly `scenarios: []`. Both templates in the
+// gallery that this one was modelled on ship it empty, and the section is meant
+// to be written by the GTM Template Editor, which serialises it. Hand-written
+// YAML here is a large unverifiable surface in front of a parser whose entire
+// error message is "The template.tpl file is invalid". The scenarios live in
+// TESTS.md and belong in the editor's Tests tab.
+if (section("TESTS") !== "scenarios: []") {
+  fail('___TESTS___ must be exactly "scenarios: []" — author scenarios in the GTM editor, not by hand (see TESTS.md)')
+} else {
+  ok("TESTS is the empty form the accepted templates use")
+}
+
+// Neither accepted template puts markup in a help string.
+const allParams = []
+const collect = (list) => list.forEach((p) => { allParams.push(p); collect(p.subParams || []) })
+collect(params)
+const htmlHelp = allParams.filter((p) => typeof p.help === "string" && /<[^>]+>/.test(p.help))
+if (htmlHelp.length) fail(`help text contains markup on: ${htmlHelp.map((p) => p.name).join(", ")}`)
+else ok(`${allParams.length} params, no markup in help text`)
 
 // LICENSE: the gallery requires an ALL-CAPS filename holding only Apache-2.0.
 const licence = readFileSync("LICENSE", "utf8")
