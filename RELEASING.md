@@ -47,7 +47,33 @@ Then wait. A review is days, not minutes, and arrives as an issue here.
 holding the template, which cannot exist until that commit is made — so the
 first release is two commits, and the metadata commit is never the one it names.
 
-## 🔴 Two things the gallery requires that nothing documents
+## 🔴 What the gallery requires that nothing documents
+
+Submission fails with exactly one sentence — *"Error submitting the template:
+The template.tpl file is invalid."* — no field, no line number, no hint. It took
+**two** rejections to find everything, and the structural guard was green for
+both. All of it came from diffing against templates that are genuinely in the
+gallery (`plausible/plausible-gtm-template`, `microsoft/clarity-gtm-template`):
+
+| Requirement | Why it is invisible |
+|---|---|
+| **A UTF-8 BOM** (`EF BB BF`) | The GTM editor writes one on export, so only hand-written templates lack it |
+| **A `brand` block in `___INFO___`** — `id`, `displayName`, base64 PNG data-URI `thumbnail` | Not in the docs or the form |
+| **`___TESTS___` must be `scenarios: []`** | Both accepted templates ship it empty. The section is meant to be written **by the editor**, which serialises it; hand-written YAML is a large unverifiable surface |
+| **No markup in `help` strings** | Neither accepted template uses any |
+| **`___NOTES___` is one short line** | Both accepted templates carry only "Created on …" |
+
+Things the same diff **cleared**, so they are not suspects next time:
+`REGEX` + `args` + `errorMessage` validators are fine; `CHECKBOX` is a valid
+param type; a trailing newline is optional (the two accepted files disagree);
+and our permission-entry shape already matched.
+
+🔑 **The method, not the list, is the takeaway.** Each rejection was diagnosed by
+comparing against a known-good artefact, never by reading the spec harder. When a
+gallery, registry or store rejects a file with an opaque message, **fetch two
+files it has already accepted and diff every dimension you can measure.**
+
+## The guard passed a file Google rejected — twice
 
 The first submission was rejected with exactly one sentence — *"Error submitting
 the template: The template.tpl file is invalid."* — no field, no line number.
