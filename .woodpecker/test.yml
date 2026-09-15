@@ -1,0 +1,37 @@
+# Runs on pull_request AND on push to main.
+#
+# 🔴 `when: event: pull_request` alone is NOT a gate on main — warden shipped
+# nine checks that only ever ran against proposals, never the article.
+when:
+  - event: pull_request
+  - event: push
+    branch: main
+
+labels:
+  runner: k8s
+
+steps:
+  - name: check-template
+    image: node:22
+    commands:
+      # No dependencies, so no npm ci: the guard is one file of stdlib Node.
+      # That is deliberate — this repo's whole product is a text file Google
+      # reads, and a dependency tree would be pure liability.
+      - node scripts/check-template.mjs
+      # metadata.yaml drives the gallery's version history. A `sha:` that is not
+      # a real commit on this repo silently serves the wrong version, so the
+      # shape is asserted here rather than trusted.
+      - |
+        node -e "
+        const fs=require('fs');
+        const y=fs.readFileSync('metadata.yaml','utf8');
+        const shas=[...y.matchAll(/^\s*-\s*sha:\s*([0-9a-f]{40})\s*\$/gm)].map(m=>m[1]);
+        if(!shas.length){console.error('metadata.yaml lists no 40-char sha');process.exit(1);}
+        if(!/^homepage:/m.test(y)){console.error('metadata.yaml has no homepage');process.exit(1);}
+        console.log('metadata.yaml: '+shas.length+' version(s), newest '+shas[0]);
+        "
+      # ⚠️ Deliberately NOT checking that each sha is a real commit here: a CI
+      # clone may be shallow, so `git cat-file -e <ancestor>` would fail on a
+      # perfectly good metadata.yaml — a guard that reds the build for being
+      # correct gets disabled, not fixed. The sha is verified against the repo
+      # by hand when it is added; RELEASING.md carries that step.
