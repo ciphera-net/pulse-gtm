@@ -1,5 +1,5 @@
 homepage: "https://pulse.ciphera.net"
 documentation: "https://docs.ciphera.net/pulse/framework-guides"
 versions:
-  - sha: b543fe4eb0aa3d7745b3064f9f8523beee2d2e6f
+  - sha: cdd56a948cd3a6e5aadb6dfa3a129a95097ba4e0
     changeNotes: Initial release.
