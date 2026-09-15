@@ -58,6 +58,19 @@ Apache-2.0 text. All eight checks were verified to fail on a real mutation.
 It cannot tell you whether the gallery will *accept* the template. Policy,
 naming and branding are a human review, and the answer arrives as an issue.
 
+## Before a Pulse repo goes public
+
+The scan that matters is wider than "look for secrets". Credentials and
+hostnames are the obvious half; the half that slipped through on this repo was
+an **internal service name** sitting in a prose comment, which no credential
+pattern matches. So check for all four:
+
+1. credentials — tokens, passwords, keys
+2. internal hostnames and addresses — `*-ops`, private ranges, non-public subdomains
+3. **internal service names** — anything the outside world has no reason to know exists
+4. customer and partner identifiers — a design partner's domain has been scrubbed
+   from a Pulse repo's history once already
+
 ## Trademark
 
 Google's Gallery Terms license its Brand Features "solely for the purpose of
