@@ -20,7 +20,8 @@ const SECTIONS = [
 // parameter from being turned into an arbitrary script include.
 const ALLOWED_SCRIPT_URLS = ["https://js.ciphera.net/*"]
 
-const src = readFileSync("template.tpl", "utf8").replace(/^﻿/, "")
+const rawBytes = readFileSync("template.tpl")
+const src = rawBytes.toString("utf8").replace(/^\uFEFF/, "")
 const fail = (m) => { console.error(`✗ ${m}`); process.exitCode = 1 }
 const ok = (m) => console.log(`✓ ${m}`)
 
@@ -58,6 +59,28 @@ if (!Array.isArray(info.categories) || info.categories.length < 1 || info.catego
   fail(`INFO.categories must hold 1-3 entries, found ${JSON.stringify(info.categories)}`)
 }
 if (!info.description) fail("INFO.description is empty — it is the gallery listing's subtitle")
+
+// 🔴 The two checks below are why the gallery once rejected this file as
+// "invalid" while this guard reported it passing. Every structural check above
+// was green; what was missing was a `brand` block and a UTF-8 BOM, which every
+// accepted template carries (checked: plausible, microsoft/clarity) and which
+// no amount of JSON validity implies. A guard is worth what it has been shown
+// to catch, not what it looks like it covers.
+if (rawBytes[0] !== 0xef || rawBytes[1] !== 0xbb || rawBytes[2] !== 0xbf) {
+  fail("template.tpl has no UTF-8 BOM - the GTM editor writes one on export and accepted templates carry it")
+} else {
+  ok("UTF-8 BOM present")
+}
+
+if (!info.brand) {
+  fail("INFO has no `brand` block - the gallery rejects the file as invalid without one")
+} else if (!info.brand.id || !info.brand.displayName || !info.brand.thumbnail) {
+  fail("INFO.brand needs id, displayName and thumbnail; got " + JSON.stringify(Object.keys(info.brand)))
+} else if (!/^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(info.brand.thumbnail)) {
+  fail("INFO.brand.thumbnail is not a base64 PNG data URI")
+} else {
+  ok("brand: " + info.brand.displayName + " (" + info.brand.thumbnail.length + "-char thumbnail)")
+}
 ok(`INFO: ${info.displayName} / ${info.categories.join(", ")}`)
 
 const permIds = perms.map((p) => p.instance.key.publicId)
