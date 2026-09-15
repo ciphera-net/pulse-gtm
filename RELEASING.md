@@ -47,6 +47,29 @@ Then wait. A review is days, not minutes, and arrives as an issue here.
 holding the template, which cannot exist until that commit is made — so the
 first release is two commits, and the metadata commit is never the one it names.
 
+## 🔴 Two things the gallery requires that nothing documents
+
+The first submission was rejected with exactly one sentence — *"Error submitting
+the template: The template.tpl file is invalid."* — no field, no line number.
+The structural guard was green at the time. Diffing against two templates that
+are actually in the gallery (`plausible/plausible-gtm-template`,
+`microsoft/clarity-gtm-template`) found both differences:
+
+1. **A UTF-8 BOM.** Both accepted files start with `EF BB BF`. The GTM editor
+   writes one on export, so every hand-written template is missing it.
+2. **A `brand` block in `___INFO___`**, with `id`, `displayName` and a
+   **base64 PNG data URI** `thumbnail`. Both accepted files have one; neither the
+   gallery docs nor the submission form mention it.
+
+Ours reuses the 64 px Pulse mark already embedded in `pulse-framer/public/icon.svg`
+— one mark, one source, rather than a second copy that can drift.
+
+Both are now asserted by `scripts/check-template.mjs`, and both were verified to
+fail it on a real mutation. 🔑 **The lesson is about the guard, not the gallery:**
+it passed a file Google rejected, because it checked what was easy to check
+rather than what acceptance actually depends on. Diff against a known-good
+artefact before trusting a guard you wrote from a spec.
+
 ## What the guard covers, and what only Google can tell you
 
 `scripts/check-template.mjs` asserts the seven sections and their order, that
