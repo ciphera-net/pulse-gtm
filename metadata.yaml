@@ -1,5 +1,7 @@
 homepage: "https://pulse.ciphera.net"
 documentation: "https://docs.ciphera.net/pulse/framework-guides"
 versions:
+  - sha: 47ff8156504cdea10fc996b1eb7ebbd3a1ab6f4c
+    changeNotes: New 96 x 96 template thumbnail.
   - sha: b3fcfd2e2e2151b1c522dd70b722196fbffb4134
     changeNotes: Initial release.
