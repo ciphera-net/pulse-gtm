@@ -87,8 +87,11 @@ are actually in the gallery (`plausible/plausible-gtm-template`,
    **base64 PNG data URI** `thumbnail`. Both accepted files have one; neither the
    gallery docs nor the submission form mention it.
 
-Ours reuses the 64 px Pulse mark already embedded in `pulse-framer/public/icon.svg`
-— one mark, one source, rather than a second copy that can drift.
+Ours is a 96 x 96 PNG of the Pulse mark on the dark ground `#0a0a0a`. The brand
+block itself is undocumented, so the nearest written limit is the style guide's
+rule for a template icon: square, 48 to 96 px, PNG, JPEG or GIF, under 50 KB
+(<https://developers.google.com/tag-platform/tag-manager/templates/style>). 96 px
+is the top of that range.
 
 Both are now asserted by `scripts/check-template.mjs`, and both were verified to
 fail it on a real mutation. 🔑 **The lesson is about the guard, not the gallery:**
