@@ -4,7 +4,7 @@ A Community Template that installs [Pulse Analytics](https://pulse.ciphera.net),
 privacy-first web analytics from [Ciphera](https://ciphera.net), through GTM
 without a Custom HTML tag.
 
-No cookies, no personal data, and the script it loads is under 3 KB.
+No cookies, no IP addresses stored, and the script it loads is under 3 KB.
 
 ## Install
 
@@ -51,7 +51,7 @@ Pulse Analytics exists partly so that measuring your traffic does not require a
 US provider. Running it *through* Google Tag Manager puts one back in the path:
 the container script is served by Google, and Google sees the request for it.
 The tag itself sends nothing to Google, and Pulse Analytics still sets no cookies
-and stores no personal data — but if avoiding that path is the reason you chose
+and never stores IP addresses — but if avoiding that path is the reason you chose
 Pulse Analytics, install the tag directly instead. The
 [framework guides](https://docs.ciphera.net/pulse/framework-guides) show how.
 
