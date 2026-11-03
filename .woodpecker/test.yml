@@ -13,7 +13,7 @@ labels:
 
 steps:
   - name: check-template
-    image: node:22
+    image: registry.ops.ciphera.net/mirror/docker.io/library/node:22-94c973596a85@sha256:94c973596a8581a87ba42746ceb0b0e0b5246d098de45b1ce04dcc967cfc5dfb
     commands:
       # No dependencies, so no npm ci: the guard is one file of stdlib Node.
       # That is deliberate — this repo's whole product is a text file Google
