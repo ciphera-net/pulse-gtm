@@ -1,6 +1,8 @@
 homepage: "https://pulse.ciphera.net"
 documentation: "https://docs.ciphera.net/pulse/framework-guides"
 versions:
+  - sha: 0e4a8b2e7244c3bb133630db3c6a4e33e8c72e09
+    changeNotes: The template thumbnail is the Pulse mark on the brand orange.
   - sha: 39c08e350c2f13f394e1bfbf4bc9149378f88889
     changeNotes: The description says what the template never stores.
   - sha: 47ff8156504cdea10fc996b1eb7ebbd3a1ab6f4c
