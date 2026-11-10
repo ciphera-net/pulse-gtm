@@ -87,7 +87,7 @@ are actually in the gallery (`plausible/plausible-gtm-template`,
    **base64 PNG data URI** `thumbnail`. Both accepted files have one; neither the
    gallery docs nor the submission form mention it.
 
-Ours is a 96 x 96 PNG of the Pulse mark on the dark ground `#0a0a0a`. The brand
+Ours is a 96 x 96 PNG of the Pulse mark in white layers on the brand orange `#FD5E0F` (brand revision v12). The brand
 block itself is undocumented, so the nearest written limit is the style guide's
 rule for a template icon: square, 48 to 96 px, PNG, JPEG or GIF, under 50 KB
 (<https://developers.google.com/tag-platform/tag-manager/templates/style>). 96 px
