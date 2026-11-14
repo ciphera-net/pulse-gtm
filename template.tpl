@@ -19,7 +19,7 @@ ___INFO___
     "displayName": "Ciphera",
     "thumbnail": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAIAAABt+uBvAAADlklEQVR4nOzcWUhUURzH8d+Z1EZS2y2iYGyhqKApWyhshRaKFnwoClpeglaihwoqqN6iXnqsoL2o7KEFgqCifaWiBQkUhKxEs9x1UtN/d/SlKP2P4/2fmSv/D4Kid16+nHvPueeOk9C0pidU23xQ7dJADA3E0EAMDcTQQAwNxNBADA3E0EAMDcTQQAwNxNBADA3E0ECMBLhu7Bwzbi46jwj1dQhVI1RJpYXIe4aGEKxzP5AZNtHM2whXmdZvuffpwRl6cRUWeeoUGzPLbDrl23Ud6QHY4sFr0OiZvsNvzcJtsMKrF2mz4oBv61kk+iHMy7PYxCW+vbekG3l8mg8EfZtPQpL310HjF5rsPRDTFRaKZukO9A9ARhdZSZvs3ZAhEYhgnZm2HINGQoBAoJoyxEK4kQD3A1FRPmLBBBdAgMAIcu4qa8ph35AxSO0HtwkEamqkS3sREwOHwW0isxg9ukB3jsM+b4ygFnRuJx1dj/paWGQ8FMhBz64075pE907BmpTecJvAjuKfyovo9Ha6vM9kLkLGBDNgKBK7My/pOzj6ZXGoCm4TDtQqVEWPL+LxRX4FGQia2evMrHWITq37s6eVQBEKzjejstAJVNNVA/m6mayVLtwrlBTAbXEQyJ9iZqxGn0HopIpifC+E22IdKK2/c9FBcho6jV5eg4CYBho4PHxmJST9/VuDqDirUwiIXaChmWbysv/9IZrdEnp4HoUfICBGgZx90pFT4ZaGOsrZBxnWAyUkmaxV7d5VdvgUaz62AdU/IMNuoB69zMy1SHPzjomuHcSrGxBjMVB6IDx2kpKZwzoygOjpZbp6EJJsBcoYb6ZkR3RkxNdounmEcvZDmJVAmYvNiMmRHhzZCArfA1vZJxAOlOg301chPaMDL+FGEN09QdcPobIEVkgGSukTXiX36OAeTVsjqOA1vblJT3JQ9gUWGal/yXQmrAVb+N2ff1BFsUlObfmJUFfp7P9TVSk+vZObyNsnNoL8qVHUCSvKo/e3ETf0TZwMDcTQQAwNxNBADA3E0EAMDcTQQAwNxNBADA3E0EAMDcTQQAwNxNBADA3E0EAMDcTQQAwNxNBADLHnYo0/EZ1fDYgnYiPIeRzqfEXh60fEEyP4acCJfgSCzhP6SI9vDOFzLiq/IZ5IvnnBOcvyn8Pj9CLN0EAMDcTQQAwNxNBADA3E0EAMDcTQQAwNxNBADA3E0EAMDcTQQIzfAAAA//9JrtcXAAAABklEQVQDAMCyzc9zetk0AAAAAElFTkSuQmCC"
   },
-  "description": "Install Pulse Analytics, privacy-first web analytics from Ciphera. No cookies, no IP addresses stored, under 3 KB.",
+  "description": "Install Pulse Analytics, privacy-first web analytics from Ciphera. It sets no cookies and never stores IP addresses. The script is about 3 KB.",
   "categories": [
     "ANALYTICS"
   ],
@@ -38,13 +38,6 @@ ___TEMPLATE_PARAMETERS___
     "displayName": "Domain",
     "simpleValueType": true,
     "help": "The domain this site is registered under in Pulse Analytics, for example example.com. Leave blank to use the page's own hostname \u2014 correct for a container that serves one site. Set it explicitly when one container serves several domains, or when the registered domain differs from the hostname."
-  },
-  {
-    "type": "CHECKBOX",
-    "name": "companion",
-    "checkboxText": "Also track clicks, copies and form submits",
-    "simpleValueType": true,
-    "defaultValue": false
   },
   {
     "type": "GROUP",
@@ -92,7 +85,6 @@ const copyFromWindow = require('copyFromWindow');
 const log = require('logToConsole');
 
 const SCRIPT_URL = 'https://js.ciphera.net/script.js';
-const COMPANION_URL = 'https://js.ciphera.net/script.interactions.js';
 
 // Merge rather than replace: a site may already have set pulseConfig by hand,
 // and clobbering it would silently drop settings this template does not model.
@@ -113,21 +105,7 @@ const onFailure = function () {
   data.gtmOnFailure();
 };
 
-if (data.companion) {
-  injectScript(
-    SCRIPT_URL,
-    function () {
-      // The companion reads window.pulse per event rather than at load, so it
-      // degrades safely on its own — but loading it after the core keeps an
-      // early click from being dropped.
-      injectScript(COMPANION_URL, data.gtmOnSuccess, onFailure, 'pulseAnalyticsCompanion');
-    },
-    onFailure,
-    'pulseAnalytics'
-  );
-} else {
-  injectScript(SCRIPT_URL, data.gtmOnSuccess, onFailure, 'pulseAnalytics');
-}
+injectScript(SCRIPT_URL, data.gtmOnSuccess, onFailure, 'pulseAnalytics');
 
 
 ___WEB_PERMISSIONS___

@@ -5,7 +5,7 @@ privacy-first web analytics from [Ciphera](https://ciphera.net), through GTM
 without a Custom HTML tag.
 
 Pulse Analytics sets no cookies and never stores IP addresses, and the script
-the template loads is under 3 KB.
+the template loads is about 3 KB.
 
 ## Install
 
@@ -27,8 +27,10 @@ free plan is enough to start.
 | Option | Default | What it does |
 |---|---|---|
 | **Domain** | the page's own hostname | The domain the site is registered under. Leave blank for one container serving one site; set it when a container serves several domains, or when the registered domain differs from the hostname. |
-| **Also track clicks, copies and form submits** | off | Loads the companion script. It is a second, separate request on purpose: the core script's size is a published claim, so nothing is folded into it. |
 | **API origin** (advanced) | none | Set this only if you proxy Pulse Analytics through your own domain. Enter the origin only, without a path, because the script appends its own path. |
+
+Scroll depth, outbound links, file downloads, and clicks, copies and form submits are each switched on or off in
+your site's settings in Pulse (Settings → General). The tag stays the same, so there is nothing to change here.
 
 ## Why it configures through `window.pulseConfig`
 
